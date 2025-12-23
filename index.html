@@ -1,0 +1,774 @@
+<!DOCTYPE html>
+<html lang="en" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Free Gifts - Get $100 Gift Cards</title>
+    <!-- Tailwind CSS Library -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- GSAP Animation Library -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    <!-- Particles.js Library -->
+    <script src="https://cdn.jsdelivr.net/npm/particles.js@2.0.0/particles.min.js"></script>
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        #particles-js { position: absolute; width: 100%; height: 100%; z-index: -1; }
+        .card-hover { transition: transform 0.3s ease, box-shadow 0.3s ease; }
+        .card-hover:hover { transform: translateY(-10px); box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1); }
+        .gradient-bg { background: linear-gradient(135deg, #f0f9ff 0%, #e6f7ff 100%); }
+        .scrollbar-hide::-webkit-scrollbar { display: none; }
+        .scrollbar-hide { -ms-overflow-style: none; scrollbar-width: none; }
+        .font-custom { font-family: 'Segoe UI', system-ui, -apple-system, sans-serif; }
+        .search-container { position: relative; }
+        .search-icon { position: absolute; right: 20px; top: 50%; transform: translateY(-50%); color: #6b7280; }
+        .active-category { background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%); color: white; transform: scale(1.05); }
+        .active-category i { color: white; }
+        .load-btn { transition: all 0.3s ease; }
+        .load-btn:hover { transform: translateY(-3px); box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1); }
+        
+        /* Modal Styles */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: rgba(0, 0, 0, 0.7);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+        }
+        
+        .modal-overlay.active {
+            opacity: 1;
+            visibility: visible;
+        }
+        
+        .modal-content {
+            background: white;
+            border-radius: 20px;
+            width: 90%;
+            max-width: 500px;
+            max-height: 90vh;
+            overflow-y: auto;
+            transform: scale(0.9);
+            transition: transform 0.3s ease;
+        }
+        
+        .modal-overlay.active .modal-content {
+            transform: scale(1);
+        }
+        
+        /* Loader Styles */
+        .loader {
+            border: 5px solid #f3f3f3;
+            border-top: 5px solid #3b82f6;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        /* Code Display */
+        .code-display {
+            font-family: monospace;
+            letter-spacing: 2px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+        
+        /* Confetti Canvas */
+        #confetti-canvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 1001;
+            display: none;
+        }
+        
+        /* Success Message */
+        .success-animation {
+            animation: successPulse 0.5s ease;
+        }
+        
+        @keyframes successPulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+    </style>
+</head>
+<body class="font-custom gradient-bg text-gray-800 min-h-screen">
+    <!-- Particles Background -->
+    <div id="particles-js"></div>
+    
+    <!-- Confetti Canvas -->
+    <canvas id="confetti-canvas"></canvas>
+
+    <!-- Navigation Bar -->
+    <nav class="container mx-auto px-6 py-4">
+        <div class="flex justify-between items-center">
+            <div class="text-2xl font-bold text-blue-600"><i class="fas fa-gift mr-2"></i>FreeGiftCards</div>
+            <a href="#cards" class="bg-blue-500 hover:bg-blue-600 text-white px-6 py-2 rounded-full font-semibold shadow-lg transition">Get Your Gift</a>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <main class="container mx-auto px-6 py-12 text-center">
+        <h1 class="text-4xl md:text-6xl font-bold mb-6 leading-tight">Get <span class="text-blue-500">Free Gift Cards</span> Worth <span class="text-green-500">$100</span></h1>
+        <p class="text-xl md:text-2xl text-gray-600 mb-10 max-w-3xl mx-auto">Choose from the largest collection of retail stores, restaurants, gaming platforms, and subscription services. Your gift awaits!</p>
+        <a href="#cards" class="inline-block bg-gradient-to-r from-green-400 to-blue-500 hover:from-green-500 hover:to-blue-600 text-white text-2xl font-bold py-4 px-12 rounded-full shadow-2xl transition-all duration-300 animate-pulse">Start Now Free <i class="fas fa-arrow-left ml-2"></i></a>
+        <p class="mt-4 text-gray-500"><i class="fas fa-shield-alt mr-2"></i>Secure, easy, and requires no payment</p>
+
+        <!-- Animated Partner Logos -->
+        <div class="mt-20 overflow-hidden">
+            <div class="flex space-x-12 rtl:space-x-reverse animate-marquee whitespace-nowrap">
+                <i class="fab fa-amazon text-4xl text-gray-400"></i>
+                <i class="fab fa-apple text-4xl text-gray-400"></i>
+                <i class="fab fa-google-play text-4xl text-gray-400"></i>
+                <i class="fab fa-spotify text-4xl text-gray-400"></i>
+                <i class="fab fa-xbox text-4xl text-gray-400"></i>
+                <i class="fab fa-steam text-4xl text-gray-400"></i>
+                <i class="fab fa-netflix text-4xl text-gray-400"></i>
+            </div>
+        </div>
+    </main>
+
+    <!-- Gift Cards Display Section -->
+    <section id="cards" class="container mx-auto px-6 py-12">
+        <h2 class="text-3xl md:text-4xl font-bold text-center mb-6"><i class="fas fa-star mr-2"></i>Choose Your Favorite Gift Category</h2>
+        
+        <!-- Search Bar -->
+        <div class="max-w-2xl mx-auto mb-12 search-container">
+            <div class="relative">
+                <input type="text" id="searchInput" placeholder="Search for a gift card (e.g., Amazon, Netflix, Starbucks...)" class="w-full py-4 px-6 pr-16 rounded-full border border-gray-300 shadow-lg focus:outline-none focus:ring-4 focus:ring-blue-300 focus:border-blue-500 text-lg">
+                <i class="fas fa-search search-icon text-xl"></i>
+            </div>
+            <p class="text-gray-500 text-sm mt-2 text-center">Search through 70+ different gift cards worth $100 each</p>
+        </div>
+
+        <!-- Card Categories -->
+        <div class="grid grid-cols-2 md:grid-cols-4 gap-6 mb-16">
+            <div id="category-all" class="category-card bg-white p-6 rounded-2xl shadow-lg text-center card-hover cursor-pointer active-category" onclick="filterCards('all')">
+                <i class="fas fa-th-large text-3xl text-blue-500 mb-4"></i>
+                <h3 class="font-bold">All</h3>
+                <p class="text-sm text-gray-500 mt-1">(70 cards)</p>
+            </div>
+            <div id="category-retail" class="category-card bg-white p-6 rounded-2xl shadow-lg text-center card-hover cursor-pointer" onclick="filterCards('retail')">
+                <i class="fas fa-shopping-bag text-3xl text-red-500 mb-4"></i>
+                <h3 class="font-bold">Retail Stores</h3>
+                <p class="text-sm text-gray-500 mt-1">(22 cards)</p>
+            </div>
+            <div id="category-food" class="category-card bg-white p-6 rounded-2xl shadow-lg text-center card-hover cursor-pointer" onclick="filterCards('food')">
+                <i class="fas fa-utensils text-3xl text-yellow-500 mb-4"></i>
+                <h3 class="font-bold">Restaurants</h3>
+                <p class="text-sm text-gray-500 mt-1">(10 cards)</p>
+            </div>
+            <div id="category-digital" class="category-card bg-white p-6 rounded-2xl shadow-lg text-center card-hover cursor-pointer" onclick="filterCards('digital')">
+                <i class="fas fa-gamepad text-3xl text-purple-500 mb-4"></i>
+                <h3 class="font-bold">Games & Digital</h3>
+                <p class="text-sm text-gray-500 mt-1">(38 cards)</p>
+            </div>
+        </div>
+        
+        <!-- Cards Count Display -->
+        <div class="flex justify-between items-center mb-6">
+            <div id="cardsCount" class="text-lg font-bold text-blue-600">Showing 8 of 70 cards</div>
+            <div id="currentCategory" class="text-gray-600">All Categories</div>
+        </div>
+
+        <!-- Gift Cards Grid -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8" id="giftCardsContainer">
+            <!-- Cards will be added dynamically via JavaScript -->
+        </div>
+
+        <!-- Load More Button -->
+        <div class="text-center mt-12">
+            <button id="loadMore" class="bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 text-white font-bold py-4 px-10 rounded-full transition-all duration-300 load-btn shadow-lg">
+                Load More <i class="fas fa-redo ml-2"></i>
+            </button>
+        </div>
+    </section>
+
+    <!-- How It Works Section -->
+    <section class="bg-white py-16 mt-12 rounded-3xl shadow-inner">
+        <div class="container mx-auto px-6">
+            <h2 class="text-3xl font-bold text-center mb-12">How to Get Your Gift in 3 Steps</h2>
+            <div class="grid md:grid-cols-3 gap-8 text-center">
+                <div class="p-6">
+                    <div class="bg-blue-100 text-blue-600 w-16 h-16 rounded-full flex items-center justify-center text-2xl font-bold mx-auto mb-4">1</div>
+                    <h3 class="text-xl font-bold mb-2">Choose Gift Card</h3>
+                    <p class="text-gray-600">Browse the list and select the card you want from your favorite store.</p>
+                </div>
+                <div class="p-6">
+                    <div class="bg-blue-100 text-blue-600 w-16 h-16 rounded-full flex items-center justify-center text-2xl font-bold mx-auto mb-4">2</div>
+                    <h3 class="text-xl font-bold mb-2">Complete Simple Task</h3>
+                    <p class="text-gray-600">Watch a short ad or participate in a quick survey.</p>
+                </div>
+                <div class="p-6">
+                    <div class="bg-blue-100 text-blue-600 w-16 h-16 rounded-full flex items-center justify-center text-2xl font-bold mx-auto mb-4">3</div>
+                    <h3 class="text-xl font-bold mb-2">Receive Code Instantly</h3>
+                    <p class="text-gray-600">The $100 gift card code will be sent to your email immediately.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="bg-gray-900 text-white py-12 mt-20">
+        <div class="container mx-auto px-6 text-center">
+            <div class="text-3xl font-bold mb-4"><i class="fas fa-gift mr-2"></i>FreeGiftCards</div>
+            <p class="text-gray-400 max-w-2xl mx-auto mb-8">We provide legal and completely free ways to get gift cards for use in the best global stores and services.</p>
+            <div class="flex justify-center space-x-6 text-2xl mb-8">
+                <a href="#" class="text-gray-400 hover:text-white"><i class="fab fa-twitter"></i></a>
+                <a href="#" class="text-gray-400 hover:text-white"><i class="fab fa-facebook"></i></a>
+                <a href="#" class="text-gray-400 hover:text-white"><i class="fab fa-instagram"></i></a>
+            </div>
+            <p class="text-gray-500 text-sm">© 2025 FreeGiftCards. All rights reserved. This is a demo site for illustration purposes.</p>
+        </div>
+    </footer>
+
+    <!-- Gift Card Modal -->
+    <div class="modal-overlay" id="giftCardModal">
+        <div class="modal-content">
+            <div class="p-8">
+                <!-- Close Button -->
+                <div class="text-right mb-4">
+                    <button id="closeModal" class="text-gray-500 hover:text-gray-700 text-2xl">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+                
+                <!-- Modal Content Sections -->
+                <div id="modalContent">
+                    <!-- Content will be filled dynamically -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // All 70 gift cards data
+        const allGiftCards = [
+            // Retail stores (category 'retail')
+            { name: "Amazon", category: "retail", color: "bg-orange-500", icon: "fab fa-amazon" },
+            { name: "Target", category: "retail", color: "bg-red-600", icon: "fas fa-bullseye" },
+            { name: "Best Buy", category: "retail", color: "bg-blue-600", icon: "fas fa-desktop" },
+            { name: "Costco", category: "retail", color: "bg-red-500", icon: "fas fa-warehouse" },
+            { name: "eBay", category: "retail", color: "bg-blue-500", icon: "fab fa-ebay" },
+            { name: "Home Depot", category: "retail", color: "bg-orange-600", icon: "fas fa-home" },
+            { name: "Lowe's", category: "retail", color: "bg-blue-700", icon: "fas fa-tools" },
+            { name: "Kohl's", category: "retail", color: "bg-purple-700", icon: "fas fa-shopping-bag" },
+            { name: "Macy's", category: "retail", color: "bg-red-700", icon: "fas fa-store" },
+            { name: "TJ Maxx", category: "retail", color: "bg-pink-600", icon: "fas fa-tag" },
+            { name: "IKEA", category: "retail", color: "bg-yellow-500", icon: "fas fa-couch" },
+            { name: "Sears", category: "retail", color: "bg-blue-800", icon: "fas fa-tools" },
+            { name: "JCPenney", category: "retail", color: "bg-gray-800", icon: "fas fa-tshirt" },
+            { name: "H&M", category: "retail", color: "bg-red-800", icon: "fas fa-tshirt" },
+            { name: "Zara", category: "retail", color: "bg-black", icon: "fas fa-vest" },
+            { name: "SHEIN", category: "retail", color: "bg-pink-700", icon: "fas fa-shopping-bag" },
+            { name: "Nike", category: "retail", color: "bg-black", icon: "fas fa-running" },
+            { name: "Adidas", category: "retail", color: "bg-black", icon: "fas fa-shoe-prints" },
+            { name: "Victoria's Secret", category: "retail", color: "bg-pink-500", icon: "fas fa-female" },
+            { name: "Sephora", category: "retail", color: "bg-pink-500", icon: "fas fa-palette" },
+            { name: "Ulta Beauty", category: "retail", color: "bg-purple-600", icon: "fas fa-spa" },
+            { name: "GameStop", category: "retail", color: "bg-red-600", icon: "fas fa-gamepad" },
+
+            // Restaurants and cafes (category 'food')
+            { name: "Starbucks", category: "food", color: "bg-green-700", icon: "fas fa-coffee" },
+            { name: "Dunkin' Donuts", category: "food", color: "bg-pink-500", icon: "fas fa-donut" },
+            { name: "McDonald's", category: "food", color: "bg-yellow-500", icon: "fas fa-hamburger" },
+            { name: "Burger King", category: "food", color: "bg-orange-600", icon: "fas fa-burger" },
+            { name: "Subway", category: "food", color: "bg-green-600", icon: "fas fa-sandwich" },
+            { name: "Domino's Pizza", category: "food", color: "bg-blue-600", icon: "fas fa-pizza-slice" },
+            { name: "Chipotle", category: "food", color: "bg-red-600", icon: "fas fa-pepper-hot" },
+            { name: "Panera Bread", category: "food", color: "bg-yellow-600", icon: "fas fa-bread-slice" },
+            { name: "KFC", category: "food", color: "bg-red-700", icon: "fas fa-drumstick-bite" },
+            { name: "Pizza Hut", category: "food", color: "bg-red-600", icon: "fas fa-pizza-slice" },
+
+            // Games and digital entertainment (category 'digital')
+            { name: "Roblox", category: "digital", color: "bg-gray-900", icon: "fas fa-cube" },
+            { name: "PlayStation", category: "digital", color: "bg-blue-500", icon: "fab fa-playstation" },
+            { name: "Xbox Live", category: "digital", color: "bg-green-500", icon: "fab fa-xbox" },
+            { name: "Nintendo eShop", category: "digital", color: "bg-red-600", icon: "fas fa-gamepad" },
+            { name: "Steam Wallet", category: "digital", color: "bg-gray-800", icon: "fab fa-steam" },
+            { name: "Fortnite V-Bucks", category: "digital", color: "bg-purple-700", icon: "fas fa-headset" },
+            { name: "Google Play", category: "digital", color: "bg-green-500", icon: "fab fa-google-play" },
+            { name: "Apple App Store", category: "digital", color: "bg-gray-800", icon: "fab fa-app-store-ios" },
+            { name: "PUBG UC", category: "digital", color: "bg-red-700", icon: "fas fa-crosshairs" },
+            { name: "Free Fire Diamonds", category: "digital", color: "bg-yellow-600", icon: "fas fa-gem" },
+            { name: "League of Legends RP", category: "digital", color: "bg-blue-800", icon: "fas fa-fist-raised" },
+            { name: "Minecraft Minecoins", category: "digital", color: "bg-green-600", icon: "fas fa-cube" },
+
+            // Streaming and subscription services (category 'digital')
+            { name: "Netflix", category: "digital", color: "bg-red-600", icon: "fab fa-netflix" },
+            { name: "Spotify", category: "digital", color: "bg-green-600", icon: "fab fa-spotify" },
+            { name: "Hulu", category: "digital", color: "bg-green-700", icon: "fas fa-tv" },
+            { name: "Disney+", category: "digital", color: "bg-blue-800", icon: "fas fa-crown" },
+            { name: "Amazon Prime", category: "digital", color: "bg-blue-900", icon: "fas fa-crown" },
+            { name: "Crunchyroll", category: "digital", color: "bg-orange-700", icon: "fas fa-film" },
+            { name: "Apple Music", category: "digital", color: "bg-pink-600", icon: "fab fa-itunes-note" },
+            { name: "YouTube Premium", category: "digital", color: "bg-red-600", icon: "fab fa-youtube" },
+
+            // Payments and money (category 'digital')
+            { name: "PayPal", category: "digital", color: "bg-blue-600", icon: "fab fa-paypal" },
+            { name: "Visa Prepaid", category: "digital", color: "bg-blue-900", icon: "fab fa-cc-visa" },
+            { name: "Mastercard Prepaid", category: "digital", color: "bg-red-800", icon: "fab fa-cc-mastercard" },
+            { name: "Cash App", category: "digital", color: "bg-green-600", icon: "fas fa-money-bill-wave" },
+            { name: "Venmo", category: "digital", color: "bg-blue-500", icon: "fab fa-vimeo" },
+            { name: "Google Pay", category: "digital", color: "bg-gray-800", icon: "fab fa-google-pay" },
+
+            // Services and delivery (category 'digital')
+            { name: "Uber", category: "digital", color: "bg-black", icon: "fas fa-car" },
+            { name: "Uber Eats", category: "digital", color: "bg-green-800", icon: "fas fa-utensils" },
+            { name: "DoorDash", category: "digital", color: "bg-red-600", icon: "fas fa-shipping-fast" },
+            { name: "Airbnb", category: "digital", color: "bg-pink-600", icon: "fas fa-home" },
+            { name: "Etsy", category: "digital", color: "bg-orange-800", icon: "fab fa-etsy" }
+        ];
+
+        // Control variables
+        let visibleCards = 8;
+        let currentFilteredCards = [...allGiftCards];
+        let currentCategory = 'all';
+        let searchQuery = '';
+
+        // Modal state variables
+        let cardClickTime = null;
+        const DAILY_LIMIT = 3;
+        const VERIFY_DELAY = 40000; // 40 seconds in milliseconds
+
+        // Initialize daily usage tracking
+        function initDailyUsage() {
+            const today = new Date().toDateString();
+            const storedDate = localStorage.getItem('giftCardDate');
+            const storedCount = localStorage.getItem('giftCardCount');
+            
+            if (storedDate !== today) {
+                localStorage.setItem('giftCardDate', today);
+                localStorage.setItem('giftCardCount', '0');
+                return 0;
+            }
+            
+            return parseInt(storedCount || '0');
+        }
+
+        // Check if user can open a card
+        function canOpenCard() {
+            const count = parseInt(localStorage.getItem('giftCardCount') || '0');
+            return count < DAILY_LIMIT;
+        }
+
+        // Increment daily usage
+        function incrementDailyUsage() {
+            const count = parseInt(localStorage.getItem('giftCardCount') || '0');
+            localStorage.setItem('giftCardCount', (count + 1).toString());
+        }
+
+        // Function to render cards
+        function renderCards(cardsToShow) {
+            const container = document.getElementById('giftCardsContainer');
+            container.innerHTML = '';
+            
+            const cardsToDisplay = cardsToShow.slice(0, visibleCards);
+            
+            document.getElementById('cardsCount').textContent = `Showing ${cardsToDisplay.length} of ${cardsToShow.length} cards`;
+            
+            const categoryNames = {
+                'all': 'All Categories',
+                'retail': 'Retail Stores',
+                'food': 'Restaurants',
+                'digital': 'Games & Digital'
+            };
+            document.getElementById('currentCategory').textContent = categoryNames[currentCategory];
+            
+            if (cardsToDisplay.length === 0) {
+                container.innerHTML = `
+                    <div class="col-span-full text-center py-12">
+                        <i class="fas fa-search text-6xl text-gray-300 mb-4"></i>
+                        <h3 class="text-2xl font-bold text-gray-700">No Results Found</h3>
+                        <p class="text-gray-500 mt-2">We couldn't find any cards matching "${searchQuery}"</p>
+                    </div>
+                `;
+                return;
+            }
+            
+            cardsToDisplay.forEach(card => {
+                const cardEl = document.createElement('div');
+                cardEl.className = 'bg-white rounded-2xl shadow-xl overflow-hidden card-hover';
+                cardEl.innerHTML = `
+                    <div class="${card.color} h-40 flex items-center justify-center">
+                        <i class="${card.icon} text-white text-6xl"></i>
+                    </div>
+                    <div class="p-6">
+                        <div class="flex items-center justify-between mb-2">
+                            <h3 class="text-2xl font-bold">${card.name}</h3>
+                            <span class="text-xs font-semibold px-3 py-1 rounded-full ${card.category === 'retail' ? 'bg-red-100 text-red-800' : card.category === 'food' ? 'bg-yellow-100 text-yellow-800' : 'bg-purple-100 text-purple-800'}">
+                                ${card.category === 'retail' ? 'Retail' : card.category === 'food' ? 'Restaurant' : 'Digital'}
+                            </span>
+                        </div>
+                        <p class="text-gray-600 mb-4">$100 Digital Gift Card</p>
+                        <div class="flex justify-between items-center">
+                            <span class="text-3xl font-bold text-green-600">$100</span>
+                            <button class="open-card-btn bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white py-3 px-6 rounded-full font-semibold transition-all duration-300 shadow-md" data-card="${card.name}">Open Card <i class="fas fa-arrow-left ml-2"></i></button>
+                        </div>
+                    </div>
+                `;
+                container.appendChild(cardEl);
+            });
+            
+            // Add event listeners to all "Open Card" buttons
+            document.querySelectorAll('.open-card-btn').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const cardName = this.getAttribute('data-card');
+                    openCardModal(cardName);
+                });
+            });
+            
+            const loadMoreBtn = document.getElementById('loadMore');
+            if (visibleCards >= cardsToShow.length) {
+                loadMoreBtn.style.display = 'none';
+            } else {
+                loadMoreBtn.style.display = 'inline-block';
+            }
+        }
+
+        // Function to filter cards by category
+        window.filterCards = function(category) {
+            currentCategory = category;
+            searchQuery = '';
+            document.getElementById('searchInput').value = '';
+            
+            if (category === 'all') {
+                currentFilteredCards = [...allGiftCards];
+                visibleCards = 8;
+            } else {
+                currentFilteredCards = allGiftCards.filter(card => card.category === category);
+                visibleCards = currentFilteredCards.length;
+            }
+            
+            document.querySelectorAll('.category-card').forEach(card => {
+                card.classList.remove('active-category');
+            });
+            document.getElementById(`category-${category}`).classList.add('active-category');
+            
+            renderCards(currentFilteredCards);
+        };
+
+        // Function to search cards
+        function searchCards() {
+            searchQuery = document.getElementById('searchInput').value.toLowerCase().trim();
+            
+            if (searchQuery === '') {
+                filterCards(currentCategory);
+                return;
+            }
+            
+            currentFilteredCards = allGiftCards.filter(card => 
+                card.name.toLowerCase().includes(searchQuery)
+            );
+            
+            visibleCards = currentFilteredCards.length;
+            
+            document.querySelectorAll('.category-card').forEach(card => {
+                card.classList.remove('active-category');
+            });
+            
+            renderCards(currentFilteredCards);
+        }
+
+        // Load more cards
+        document.getElementById('loadMore').addEventListener('click', () => {
+            visibleCards += 8;
+            renderCards(currentFilteredCards);
+        });
+
+        // Open card modal function
+        function openCardModal(cardName) {
+            // Check daily limit
+            if (!canOpenCard()) {
+                alert(`Daily limit reached! You can only open ${DAILY_LIMIT} cards per day.`);
+                return;
+            }
+            
+            // Record click time
+            cardClickTime = new Date().getTime();
+            
+            // Increment daily usage
+            incrementDailyUsage();
+            
+            // Show modal
+            const modal = document.getElementById('giftCardModal');
+            const modalContent = document.getElementById('modalContent');
+            
+            // Show loading state
+            modalContent.innerHTML = `
+                <div class="text-center py-8">
+                    <div class="loader mb-6"></div>
+                    <h3 class="text-2xl font-bold text-gray-800 mb-2">Generating your card...</h3>
+                    <p class="text-gray-600">you are didn't Complete the offer</p>
+                </div>
+            `;
+            
+            modal.classList.add('active');
+            
+            // After 1.5 seconds, show the card code and offer
+            setTimeout(() => {
+                const code = generateFakeCode(cardName);
+                modalContent.innerHTML = `
+                    <div class="text-center">
+                        <div class="mb-6">
+                            <i class="fas fa-gift text-5xl text-blue-500 mb-4"></i>
+                            <h3 class="text-2xl font-bold text-gray-800 mb-2">Your ${cardName} Gift Card</h3>
+                            <p class="text-gray-600">Complete the offer to reveal your code</p>
+                        </div>
+                        
+                        <div class="code-display text-2xl font-bold py-4 px-6 rounded-xl mb-6">
+                            ${code.hidden}
+                        </div>
+                        
+                        <div class="space-y-4">
+                            <a href="https://onykp.com/link?z=8693712&var={SOURCE_ID}&ymid={CLICK_ID}" target="_blank" class="block w-full bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 text-white font-bold py-4 px-6 rounded-full transition-all duration-300 shadow-lg">
+                                Complete Offer Now <i class="fas fa-external-link-alt ml-2"></i>
+                            </a>
+                            
+                            <button id="verifyOffer" class="w-full bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white font-bold py-4 px-6 rounded-full transition-all duration-300 shadow-lg">
+                                Verify <i class="fas fa-check ml-2"></i>
+                            </button>
+                            
+                            <p class="text-sm text-gray-500 mt-4">
+                                <i class="fas fa-info-circle mr-2"></i>
+                                You must complete the offer before verification
+                            </p>
+                        </div>
+                    </div>
+                `;
+                
+                // Add event listener to verify button
+                document.getElementById('verifyOffer').addEventListener('click', () => {
+                    verifyOffer(cardName, code.full);
+                });
+                
+            }, 1500);
+        }
+
+        // Generate fake gift card code
+        function generateFakeCode(cardName) {
+            const prefix = cardName.substring(0, 3).toUpperCase();
+            const randomNum1 = Math.floor(1000 + Math.random() * 9000);
+            const randomNum2 = Math.floor(1000 + Math.random() * 9000);
+            const fullCode = `${prefix}-${randomNum1}-${randomNum2}`;
+            const hiddenCode = `${prefix}-${randomNum1}-****`;
+            
+            return { full: fullCode, hidden: hiddenCode };
+        }
+
+        // Verify offer completion
+        function verifyOffer(cardName, fullCode) {
+            const currentTime = new Date().getTime();
+            const timeElapsed = currentTime - cardClickTime;
+            
+            if (timeElapsed < VERIFY_DELAY) {
+                const remainingSeconds = Math.ceil((VERIFY_DELAY - timeElapsed) / 1000);
+                alert(`You didn't finish the offer.`);
+                return;
+            }
+            
+            // Show verification loader
+            const modalContent = document.getElementById('modalContent');
+            modalContent.innerHTML = `
+                <div class="text-center py-8">
+                    <div class="loader mb-6"></div>
+                    <h3 class="text-2xl font-bold text-gray-800 mb-2">Verifying offer completion...</h3>
+                    <p class="text-gray-600">Please wait while we verify your completion</p>
+                </div>
+            `;
+            
+            // After 1.8 seconds, show success
+            setTimeout(() => {
+                modalContent.innerHTML = `
+                    <div class="text-center success-animation">
+                        <div class="mb-6">
+                            <i class="fas fa-check-circle text-5xl text-green-500 mb-4"></i>
+                            <h3 class="text-2xl font-bold text-gray-800 mb-2">Congratulations!</h3>
+                            <p class="text-gray-600">Your ${cardName} gift card is ready</p>
+                        </div>
+                        
+                        <div class="code-display text-2xl font-bold py-4 px-6 rounded-xl mb-6">
+                            ${fullCode}
+                        </div>
+                        
+                        <div class="space-y-4">
+                            <button id="copyCode" class="w-full bg-gradient-to-r from-purple-500 to-purple-600 hover:from-purple-600 hover:to-purple-700 text-white font-bold py-4 px-6 rounded-full transition-all duration-300 shadow-lg">
+                                Copy Code <i class="fas fa-copy ml-2"></i>
+                            </button>
+                            
+                            <a href="https://medium.com/@omarahmeddlm2023/how-to-legitimately-get-100-gift-cards-for-free-a-practical-step-by-step-playbook-actionable-7ef1597d9017" target="_blank" class="block w-full bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700 text-white font-bold py-4 px-6 rounded-full transition-all duration-300 shadow-lg">
+                             more gift cards <i class="fab fa-amazon ml-2"></i>
+                            </a>
+                        </div>
+                        
+                        <p class="text-sm text-gray-500 mt-6">
+                            <i class="fas fa-check-circle text-green-500 mr-2"></i>
+                            Code activated successfully. Expires in 30 days.
+                        </p>
+                    </div>
+                `;
+                
+                // Add event listener to copy code button
+                document.getElementById('copyCode').addEventListener('click', () => {
+                    navigator.clipboard.writeText(fullCode).then(() => {
+                        const btn = document.getElementById('copyCode');
+                        btn.innerHTML = 'Copied! <i class="fas fa-check ml-2"></i>';
+                        btn.classList.remove('from-purple-500', 'to-purple-600');
+                        btn.classList.add('from-green-500', 'to-green-600');
+                        
+                        setTimeout(() => {
+                            btn.innerHTML = 'Copy Code <i class="fas fa-copy ml-2"></i>';
+                            btn.classList.remove('from-green-500', 'to-green-600');
+                            btn.classList.add('from-purple-500', 'to-purple-600');
+                        }, 2000);
+                    });
+                });
+                
+                // Start confetti animation
+                startConfetti();
+                
+            }, 1800);
+        }
+
+        // Confetti animation function
+        function startConfetti() {
+            const canvas = document.getElementById('confetti-canvas');
+            const ctx = canvas.getContext('2d');
+            
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+            canvas.style.display = 'block';
+            
+            const confettiPieces = [];
+            const colors = ['#3b82f6', '#10b981', '#f59e0b', '#ef4444', '#8b5cf6'];
+            
+            // Create confetti pieces
+            for (let i = 0; i < 150; i++) {
+                confettiPieces.push({
+                    x: Math.random() * canvas.width,
+                    y: Math.random() * canvas.height - canvas.height,
+                    r: Math.random() * 10 + 5,
+                    d: Math.random() * 5 + 2,
+                    color: colors[Math.floor(Math.random() * colors.length)],
+                    tilt: Math.random() * 10 - 10,
+                    tiltAngle: 0,
+                    tiltAngleIncrement: Math.random() * 0.05 + 0.05
+                });
+            }
+            
+            let animationFrame;
+            
+            function drawConfetti() {
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+                
+                confettiPieces.forEach(p => {
+                    ctx.beginPath();
+                    ctx.lineWidth = p.d;
+                    ctx.strokeStyle = p.color;
+                    ctx.moveTo(p.x + p.tilt + p.r, p.y);
+                    ctx.lineTo(p.x + p.tilt, p.y + p.tilt + p.r);
+                    ctx.stroke();
+                    
+                    p.tiltAngle += p.tiltAngleIncrement;
+                    p.y += (Math.cos(p.d) + 1 + p.r / 2) / 2;
+                    p.x += Math.sin(p.d);
+                    p.tilt = Math.sin(p.tiltAngle) * 15;
+                    
+                    if (p.y > canvas.height) {
+                        p.x = Math.random() * canvas.width;
+                        p.y = -20;
+                    }
+                });
+                
+                animationFrame = requestAnimationFrame(drawConfetti);
+            }
+            
+            drawConfetti();
+            
+            // Stop confetti after 5 seconds
+            setTimeout(() => {
+                cancelAnimationFrame(animationFrame);
+                canvas.style.display = 'none';
+            }, 5000);
+        }
+
+        // Close modal function
+        function closeModal() {
+            const modal = document.getElementById('giftCardModal');
+            modal.classList.remove('active');
+        }
+
+        // Page initialization
+        document.addEventListener('DOMContentLoaded', () => {
+            // Initialize particles background
+            particlesJS('particles-js', {
+                particles: {
+                    number: { value: 80, density: { enable: true, value_area: 800 } },
+                    color: { value: "#3b82f6" },
+                    shape: { type: "circle" },
+                    opacity: { value: 0.3, random: true },
+                    size: { value: 5, random: true },
+                    move: { enable: true, speed: 2, direction: "none", random: true }
+                }
+            });
+
+            // Initialize daily usage tracking
+            initDailyUsage();
+
+            // Initial card rendering
+            renderCards(allGiftCards);
+
+            // Animate logos with GSAP
+            gsap.to(".animate-marquee", {
+                x: "-50%",
+                duration: 20,
+                repeat: -1,
+                ease: "linear"
+            });
+
+            // Search bar event listeners
+            document.getElementById('searchInput').addEventListener('input', searchCards);
+            document.getElementById('searchInput').addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') {
+                    searchCards();
+                }
+            });
+
+            // Modal close event listeners
+            document.getElementById('closeModal').addEventListener('click', closeModal);
+            document.getElementById('giftCardModal').addEventListener('click', function(e) {
+                if (e.target === this) {
+                    closeModal();
+                }
+            });
+
+            // Close modal with Escape key
+            document.addEventListener('keydown', function(e) {
+                if (e.key === 'Escape') {
+                    closeModal();
+                }
+            });
+        });
+    </script>
+</body>
+</html>
